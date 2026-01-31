@@ -1,8 +1,9 @@
 import express from "express";
+import { createHotel, getHotels } from "../controllers/hotelController.js";
+
 const router = express.Router();
-import { getHotels, createHotel } from "../controllers/hotelController.js";
 
-router.get("/", getHotels);
 router.post("/", createHotel);
+router.get("/", getHotels);
 
-export default router; // 'module.exports' ki jagah ye likhna hai
+export default router;

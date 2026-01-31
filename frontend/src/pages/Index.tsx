@@ -4,12 +4,14 @@ import { HotelCard } from "@/components/hotel/HotelCard";
 import { CityCard } from "@/components/city/CityCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { hotels, popularCities } from "@/lib/data";
+import { useHotels } from "@/hooks/useHotels";
 import { ArrowRight, Shield, Headphones, Percent, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Index = () => {
-  const featuredHotels = hotels.filter((h) => h.featured);
+  const { hotels, loading } = useHotels();
+const featuredHotels = hotels.filter((h: any) => h.featured);
+
 
   return (
     <MainLayout>

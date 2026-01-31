@@ -6,7 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { hotels } from "@/lib/data";
+import { api } from "@/lib/api";
+import { useEffect } from "react";
+
 import { format } from "date-fns";
 import {
   Star,
@@ -30,7 +32,14 @@ import { cn } from "@/lib/utils";
 export default function HotelDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const hotel = hotels.find((h) => h.id === id);
+ const [hotel, setHotel] = useState<any>(null);
+
+useEffect(() => {
+  api.get(`/hotels/${id}`)
+    .then(res => setHotel(res.data))
+    .catch(() => navigate("/hotels"));
+}, [id]);
+
 
   const [currentImage, setCurrentImage] = useState(0);
   const [checkIn, setCheckIn] = useState<Date>();
