@@ -132,7 +132,7 @@ export function HotelCard({ hotel, variant = "grid" }: HotelCardProps) {
               </span>
             )}
             <span className="text-xl font-bold text-foreground">
-              ₹{hotel.price.toLocaleString()}
+              ₹{hotel.price?.toLocaleString() ?? "N/A"}
             </span>
             <span className="text-sm text-muted-foreground">/night</span>
           </div>

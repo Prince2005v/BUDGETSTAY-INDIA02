@@ -1,17 +1,23 @@
 import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import cors from "cors";
 
 import hotelRoutes from "./routes/hotelRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import roomRoutes from "./routes/roomRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 
-
 dotenv.config();
 
 const app = express();
+
+// MIDDLEWARES
 app.use(express.json());
+app.use(cors({
+  origin: "http://localhost:8080",
+  credentials: true
+}));
 
 // ROUTES
 app.use("/api/hotels", hotelRoutes);

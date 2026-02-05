@@ -1,9 +1,14 @@
 import express from "express";
-import { createHotel, getHotels } from "../controllers/hotelController.js";
+import {
+  createHotel,
+  getHotels,
+  seedHotels
+} from "../controllers/hotelController.js";
 
-const router = express.Router();
+const router = express.Router(); // ✅ FIRST create router
 
 router.post("/", createHotel);
 router.get("/", getHotels);
+router.post("/seed", seedHotels);
 
 export default router;

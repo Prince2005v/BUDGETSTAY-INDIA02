@@ -1,0 +1,47 @@
+[
+  {
+    "name": "The Heritage Palace",
+    "city": "Udaipur",
+    "price": 4500,
+    "rating": 4.8,
+    "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800",
+    "featured": true,
+    "description": "Experience royal luxury in the heart of the city of lakes."
+  },
+  {
+    "name": "Zostel Homes Riverside",
+    "city": "Rishikesh",
+    "price": 1200,
+    "rating": 4.5,
+    "image": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800",
+    "featured": true,
+    "description": "Peaceful stay right next to the holy Ganges."
+  },
+  {
+    "name": "Budget Inn Metro",
+    "city": "Delhi",
+    "price": 1800,
+    "rating": 4.0,
+    "image": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800",
+    "featured": true,
+    "description": "Affordable comfort for business travelers near the airport."
+  },
+  {
+    "name": "Mountain View Lodge",
+    "city": "Manali",
+    "price": 2500,
+    "rating": 4.7,
+    "image": "https://images.unsplash.com/photo-1469796466635-455ede028684?w=800",
+    "featured": true,
+    "description": "Wake up to snowy peaks and fresh pine air."
+  },
+  {
+    "name": "Goa Beach Huts",
+    "city": "Goa",
+    "price": 3200,
+    "rating": 4.3,
+    "image": "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800",
+    "featured": false,
+    "description": "Steps away from the Arabian sea. Perfect for sunset lovers."
+  }
+]

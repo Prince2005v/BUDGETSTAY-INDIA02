@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -36,27 +37,58 @@ export default function Signup() {
     }, 1000);
   };
 
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!agreedToTerms) {
-      toast({
-        title: "Please accept terms",
-        description: "You must agree to the terms and conditions to continue.",
-        variant: "destructive",
-      });
-      return;
-    }
+const handleSignup = async (e: React.FormEvent) => {
+  e.preventDefault();
 
+  if (!agreedToTerms) {
+    toast({
+      title: "Please accept terms",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  if (!otpSent) {
+    toast({
+      title: "Verify phone first",
+      description: "OTP verification required",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  try {
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "Account Created!",
-        description: "Welcome to BudgetStay. Start exploring now!",
-      });
-      navigate("/");
-    }, 1500);
-  };
+
+    const res = await axios.post(
+      "http://localhost:5001/api/auth/register",
+      {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+      }
+    );
+
+    toast({
+      title: "Account created 🎉",
+      description: "Please login to continue",
+    });
+
+    navigate("/auth/login");
+  } catch (err: any) {
+    toast({
+      title: "Signup failed",
+      description:
+        err.response?.data?.message || "Something went wrong",
+      variant: "destructive",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center p-4">

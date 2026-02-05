@@ -1,20 +1,37 @@
 import { useEffect, useState } from "react";
-import API from "../api/api";
-import HotelCard from "../components/HotelCard";
+import axios from "axios";
 
-export default function Home() {
+const Home = () => {
   const [hotels, setHotels] = useState([]);
 
   useEffect(() => {
-    API.get("/hotels").then(res => setHotels(res.data));
+    const fetchHotels = async () => {
+      const res = await axios.get(
+        "http://localhost:5001/api/hotels"
+      );
+
+      setHotels(res.data.slice(0, 4)); // sirf 4 show on home
+    };
+
+    fetchHotels();
   }, []);
 
   return (
     <div>
-      <h1>BudgetStay India</h1>
-      {hotels.map(hotel => (
-        <HotelCard key={hotel._id} hotel={hotel} />
-      ))}
+      <h2>Featured Hotels</h2>
+
+      {hotels.length === 0 && <p>No hotels found</p>}
+
+      <div>
+        {hotels.map((hotel) => (
+          <div key={hotel._id}>
+            <h3>{hotel.name}</h3>
+            <p>{hotel.city}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
-}
+};
+
+export default Home;

@@ -8,13 +8,11 @@ router.post("/", async (req, res) => {
   try {
     const { hotel, room, userName, userPhone, checkIn, checkOut } = req.body;
 
-    // 1️⃣ Room exists?
     const roomData = await Room.findById(room);
     if (!roomData) {
       return res.status(404).json({ message: "Room not found" });
     }
 
-    // 2️⃣ Date validation
     const inDate = new Date(checkIn);
     const outDate = new Date(checkOut);
     const nights = (outDate - inDate) / (1000 * 60 * 60 * 24);
@@ -23,7 +21,6 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ message: "Invalid dates" });
     }
 
-    // 3️⃣ Availability check 🔐
     const conflict = await Booking.findOne({
       room,
       checkIn: { $lt: outDate },
@@ -36,10 +33,8 @@ router.post("/", async (req, res) => {
         .json({ message: "Room already booked for these dates" });
     }
 
-    // 4️⃣ Auto price
     const totalPrice = nights * roomData.pricePerNight;
 
-    // 5️⃣ Create booking
     const booking = await Booking.create({
       hotel,
       room,
@@ -56,4 +51,4 @@ router.post("/", async (req, res) => {
   }
 });
 
-export default router;
+export default router; // 🔥 THIS LINE FIXES EVERYTHING

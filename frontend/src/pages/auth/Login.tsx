@@ -13,7 +13,8 @@ export default function Login() {
   const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [loginMethod, setLoginMethod] = useState<"email" | "phone">("email");
+ const [loginMethod, setLoginMethod] = useState("email");
+
   const [otpSent, setOtpSent] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -23,18 +24,49 @@ export default function Login() {
     otp: "",
   });
 
-  const handleEmailLogin = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleEmailLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  try {
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "Welcome back!",
-        description: "You have successfully logged in.",
-      });
-      navigate("/");
-    }, 1500);
-  };
+
+    const res = await fetch("http://localhost:5001/api/auth/login", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    email: formData.email,
+    password: formData.password,
+  }),
+});
+
+const data = await res.json().catch(() => ({}));
+
+if (!res.ok) {
+  throw new Error(data.message || "Invalid email or password");
+}
+
+
+    // 🔐 save session
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+
+    toast({
+      title: "Welcome back 👋",
+      description: `Hello ${data.user.name}`,
+    });
+
+    navigate("/");
+  } catch (err: any) {
+    toast({
+      title: "Login failed",
+      description: err.message,
+      variant: "destructive",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const handleSendOtp = () => {
     setIsLoading(true);

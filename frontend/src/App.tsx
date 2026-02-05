@@ -10,6 +10,7 @@ import HotelDetails from "./pages/HotelDetails";
 import BookingPage from "./pages/BookingPage";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
+import Profile from "./pages/Profile";
 import PartnerLayout from "./pages/partner/PartnerLayout";
 import PartnerDashboard from "./pages/partner/PartnerDashboard";
 import PartnerHotels from "./pages/partner/PartnerHotels";
@@ -20,6 +21,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminHotels from "./pages/admin/AdminHotels";
 import AdminBookings from "./pages/admin/AdminBookings";
 import AdminRevenue from "./pages/admin/AdminRevenue";
+
 
 const queryClient = new QueryClient();
 
@@ -36,6 +38,8 @@ const App = () => (
           <Route path="/booking" element={<BookingPage />} />
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/signup" element={<Signup />} />
+          <Route path="/profile" element={<Profile />} />
+
           
           {/* Partner Dashboard */}
           <Route path="/partner" element={<PartnerLayout />}>

@@ -330,3 +330,11 @@ export const amenitiesList = [
   "Airport Transfer", "Tour Desk", "Lake View", "Mountain View", "Garden", "Rooftop",
   "Yoga Classes", "Pet Friendly", "Wheelchair Accessible", "Business Center"
 ];
+const data = {
+  popularCities: [
+    { name: "Udaipur", image: "...", hotels: 120 },
+    { name: "Rishikesh", image: "...", hotels: 90 }
+  ]
+};
+
+export default data;

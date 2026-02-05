@@ -13,7 +13,6 @@ const roomSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["Single", "Double", "Deluxe"],
       required: true,
     },
     pricePerNight: {
@@ -24,4 +23,7 @@ const roomSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Room", roomSchema);
+// 🔥 THIS LINE WAS MISSING
+const Room = mongoose.model("Room", roomSchema);
+
+export default Room;
