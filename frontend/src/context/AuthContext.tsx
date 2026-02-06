@@ -1,38 +1,69 @@
-// import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "@/firebase";
 
-// const AuthContext = createContext(null);
+const AuthContext = createContext(null);
 
-// export const AuthProvider = ({ children }) => {
-//   const [user, setUser] = useState(null);
-//   const [loading, setLoading] = useState(true);
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-//   useEffect(() => {
-//     const token = localStorage.getItem("token");
-//     const storedUser = localStorage.getItem("user");
+  useEffect(() => {
+    // 🔥 Firebase auth listener (OTP login)
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        // ✅ Phone OTP user
+        const authUser = {
+          uid: firebaseUser.uid,
+          phone: firebaseUser.phoneNumber,
+          name: firebaseUser.displayName || "User",
+          avatar:
+            firebaseUser.photoURL ||
+            `https://api.dicebear.com/7.x/initials/svg?seed=${firebaseUser.phoneNumber}`,
+          provider: "firebase",
+        };
 
-//     if (token && storedUser) {
-//       setUser(JSON.parse(storedUser));
-//     }
-//     setLoading(false);
-//   }, []);
+        setUser(authUser);
+        localStorage.setItem("user", JSON.stringify(authUser));
+      } else {
+        // ✅ Email/password user (backend)
+        const localUser = localStorage.getItem("user");
+        setUser(localUser ? JSON.parse(localUser) : null);
+      }
 
-//   const login = (data) => {
-//     localStorage.setItem("token", data.token);
-//     localStorage.setItem("user", JSON.stringify(data.user));
-//     setUser(data.user);
-//   };
+      setLoading(false);
+    });
 
-//   const logout = () => {
-//     localStorage.clear();
-//     setUser(null);
-//   };
+    return () => unsubscribe();
+  }, []);
 
-//   return (
-//     <AuthContext.Provider value={{ user, login, logout, loading }}>
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// };
+  // ✅ SAFE LOGOUT (NO 404)
+  const logout = async () => {
+    try {
+      if (auth.currentUser) {
+        await signOut(auth); // firebase logout
+      }
+    } catch (err) {
+      console.error("Firebase logout error:", err);
+    } finally {
+      // backend + local cleanup
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      setUser(null);
+    }
+  };
 
-// export const useAuth = () => useContext(AuthContext);
-// // 
+  return (
+    <AuthContext.Provider value={{ user, loading, logout }}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used inside AuthProvider");
+  }
+  return context;
+};

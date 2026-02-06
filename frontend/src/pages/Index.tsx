@@ -195,7 +195,7 @@ const popularCities = data.popularCities;
 
 const Index = () => {
   // 🔥 Home page → sirf limited hotels
-  const { hotels, loading } = useHotels(4);
+  const { hotels, loading } = useHotels(8);
 
   return (
     <MainLayout>
