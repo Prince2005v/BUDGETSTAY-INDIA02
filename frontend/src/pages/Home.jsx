@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "@/lib/api";
 
 const Home = () => {
   const [hotels, setHotels] = useState([]);
 
   useEffect(() => {
     const fetchHotels = async () => {
-      const res = await axios.get(
-        "http://localhost:5001/api/hotels"
-      );
+      const res = await api.get("/hotels");
 
       setHotels(res.data.slice(0, 4)); // sirf 4 show on home
     };
