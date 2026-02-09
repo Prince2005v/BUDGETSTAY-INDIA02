@@ -1,4 +1,5 @@
 import { useState } from "react";
+import api from "@/lib/api";
 import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
@@ -56,24 +57,20 @@ export default function Login() {
     otp: "",
   });
 
-  // ---------------- EMAIL LOGIN (UNCHANGED)
-  const handleEmailLogin = async (e) => {
+  // ... (inside component)
+
+  // ---------------- EMAIL LOGIN
+  const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setIsLoading(true);
 
-      const res = await fetch("http://localhost:5001/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
+      const res = await api.post("/auth/login", {
+        email: formData.email,
+        password: formData.password,
       });
 
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.message);
+      const data = res.data;
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));

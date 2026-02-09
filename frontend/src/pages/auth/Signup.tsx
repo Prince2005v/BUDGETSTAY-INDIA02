@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Hotel, Mail, Phone, Lock, User, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
+import api from "@/lib/api";
 export default function Signup() {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -37,56 +37,56 @@ export default function Signup() {
     }, 1000);
   };
 
-const handleSignup = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  if (!agreedToTerms) {
-    toast({
-      title: "Please accept terms",
-      variant: "destructive",
-    });
-    return;
-  }
+    if (!agreedToTerms) {
+      toast({
+        title: "Please accept terms",
+        variant: "destructive",
+      });
+      return;
+    }
 
-  if (!otpSent) {
-    toast({
-      title: "Verify phone first",
-      description: "OTP verification required",
-      variant: "destructive",
-    });
-    return;
-  }
+    if (!otpSent) {
+      toast({
+        title: "Verify phone first",
+        description: "OTP verification required",
+        variant: "destructive",
+      });
+      return;
+    }
 
-  try {
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
 
-    const res = await axios.post(
-      "http://localhost:5001/api/auth/register",
-      {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        password: formData.password,
-      }
-    );
+      const res = await api.post(
+        "/auth/register",
+        {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          password: formData.password,
+        }
+      );
 
-    toast({
-      title: "Account created 🎉",
-      description: "Please login to continue",
-    });
+      toast({
+        title: "Account created 🎉",
+        description: "Please login to continue",
+      });
 
-    navigate("/auth/login");
-  } catch (err: any) {
-    toast({
-      title: "Signup failed",
-      description:
-        err.response?.data?.message || "Something went wrong",
-      variant: "destructive",
-    });
-  } finally {
-    setIsLoading(false);
-  }
-};
+      navigate("/auth/login");
+    } catch (err: any) {
+      toast({
+        title: "Signup failed",
+        description:
+          err.response?.data?.message || "Something went wrong",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
 
 
