@@ -189,9 +189,8 @@ import { Badge } from "@/components/ui/badge";
 import { useHotels } from "@/hooks/useHotels";
 import { ArrowRight, Shield, Headphones, Percent, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
-import data from "@/lib/data";
+import { popularCities } from "@/lib/data";
 
-const popularCities = data.popularCities;
 
 const Index = () => {
   // 🔥 Home page → sirf limited hotels
@@ -278,11 +277,15 @@ const Index = () => {
             Explore Popular Cities
           </h2>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {popularCities.map((city, i) => (
-              <CityCard key={city.name} city={city} size={i < 2 ? "lg" : "md"} />
-            ))}
-          </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+ {popularCities.map((city, i) => (
+  <CityCard
+    key={city.name}
+    city={city}
+    size={i < 2 ? "lg" : "md"}
+  />
+))}
+      </div>
         </div>
       </section>
 

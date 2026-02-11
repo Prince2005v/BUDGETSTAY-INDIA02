@@ -2,8 +2,10 @@ import { useState } from "react";
 import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
-  getAuth,
 } from "firebase/auth";
+
+import { auth } from "../../firebase";   // path check karo
+
 
 declare global {
   interface Window {
@@ -41,7 +43,7 @@ import { useToast } from "@/hooks/use-toast";
 export default function Login() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const auth = getAuth();
+  // const auth = getAuth();
 
   const [loginMethod, setLoginMethod] = useState("email");
   const [showPassword, setShowPassword] = useState(false);
