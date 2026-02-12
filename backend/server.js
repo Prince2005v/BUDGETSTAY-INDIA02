@@ -8,9 +8,21 @@ import bookingRoutes from "./routes/bookingRoutes.js";
 import roomRoutes from "./routes/roomRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 
+import connectDB from "./config/db.js";
+
 dotenv.config();
 
 const app = express();
+
+// DB Connection Middleware
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(500).json({ message: "Database connection failed" });
+  }
+});
 
 // MIDDLEWARES
 app.use(express.json());
@@ -30,13 +42,11 @@ app.get("/", (req, res) => {
   res.send("API running 🚀");
 });
 
-// DB
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ Mongo connected"))
-  .catch((err) => console.log("❌ Mongo error", err));
+// PORT
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () =>
   console.log(`🚀 Server running on port ${PORT}`)
 );
+console.log("MONGO_URI:", process.env.MONGO_URI);
+
