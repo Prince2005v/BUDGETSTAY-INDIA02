@@ -11,6 +11,7 @@ import authRoutes from "./routes/authRoutes.js";
 import connectDB from "./config/db.js";
 
 dotenv.config();
+const cors = require("cors");
 
 const app = express();
 
@@ -27,7 +28,7 @@ app.use(async (req, res, next) => {
 // MIDDLEWARES
 app.use(express.json());
 app.use(cors({
-  origin: "http://localhost:8080",
+  origin: "https://budgetstay-india-02.vercel.app",
   credentials: true
 }));
 
