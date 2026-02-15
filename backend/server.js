@@ -27,8 +27,24 @@ app.use(async (req, res, next) => {
 
 // MIDDLEWARES
 app.use(express.json());
+// app.use(cors({
+//   origin: "https://budgetstay-india-02.vercel.app",
+//   credentials: true
+// }));
+const allowedOrigins = [
+  "http://localhost:8080",
+  "http://localhost:5173",
+  "https://budgetstay-india-02.vercel.app"
+];
+
 app.use(cors({
-  origin: "https://budgetstay-india-02.vercel.app",
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
 

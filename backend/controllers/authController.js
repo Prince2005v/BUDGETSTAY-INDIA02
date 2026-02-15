@@ -41,7 +41,7 @@ await transporter.sendMail({
 });
 
 res.json({ message: "OTP sent successfully" });
-```
+
 
 } catch (error) {
 console.log("Email Error:", error);
@@ -54,7 +54,7 @@ export const signup = async (req, res) => {
 try {
 const { name, email, password, otp } = req.body;
 
-```
+
 const record = emailOtpStore[email];
 
 if (!record) {

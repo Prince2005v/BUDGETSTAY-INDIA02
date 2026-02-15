@@ -55,7 +55,7 @@ res.status(500).json({ message: err.message });
 REGISTER WITH OTP
 POST /auth/register
 ================================ */
-router.post("/register", async (req, res) => {
+router.post("/Signup", async (req, res) => {
 try {
 const { name, email, password, otp } = req.body;
 
