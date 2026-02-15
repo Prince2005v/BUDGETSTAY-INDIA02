@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,97 +5,137 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Hotel, Mail, Phone, Lock, User, ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { Hotel, Mail, Lock, User, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import api from "@/lib/api";
+
 export default function Signup() {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [otpSent, setOtpSent] = useState(false);
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
+const navigate = useNavigate();
+const { toast } = useToast();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    password: "",
-    otp: "",
-  });
+const [showPassword, setShowPassword] = useState(false);
+const [isLoading, setIsLoading] = useState(false);
+const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-  const handleSendOtp = () => {
+// Email OTP states
+const [otpSent, setOtpSent] = useState(false);
+const [otp, setOtp] = useState("");
+
+const [formData, setFormData] = useState({
+name: "",
+email: "",
+password: "",
+});
+
+// Send Email OTP
+const handleSendOtp = async () => {
+if (!formData.email) {
+toast({
+title: "Enter email first",
+variant: "destructive",
+});
+return;
+}
+
+
+// Send Email OTP
+const handleSendOtp = async () => {
+  if (!formData.email) {
+    toast({
+      title: "Enter email first",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  try {
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setOtpSent(true);
-      toast({
-        title: "OTP Sent!",
-        description: `A 6-digit OTP has been sent to ${formData.phone}`,
-      });
-    }, 1000);
-  };
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
+    await api.post("/auth/send-otp", {
+      email: formData.email,
+    });
 
-    if (!agreedToTerms) {
-      toast({
-        title: "Please accept terms",
-        variant: "destructive",
-      });
-      return;
-    }
+    setOtpSent(true);
 
-    if (!otpSent) {
-      toast({
-        title: "Verify phone first",
-        description: "OTP verification required",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-
-      const res = await api.post(
-        "/auth/register",
-        {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          password: formData.password,
-        }
-      );
-
-      toast({
-        title: "Account created 🎉",
-        description: "Please login to continue",
-      });
-
-      navigate("/auth/login");
-    } catch (err: any) {
-      toast({
-        title: "Signup failed",
-        description:
-          err.response?.data?.message || "Something went wrong",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    toast({
+      title: "OTP Sent",
+      description: "Check your email for OTP",
+    });
+  } catch (err: any) {
+    toast({
+      title: "Failed to send OTP",
+      description: err.response?.data?.message || "Error",
+      variant: "destructive",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
 
 
+};
 
-  return (
+// Signup
+const handleSignup = async (e: React.FormEvent) => {
+e.preventDefault();
+
+
+// Signup
+const handleSignup = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (!agreedToTerms) {
+    toast({
+      title: "Please accept terms",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  if (!otpSent || !otp) {
+    toast({
+      title: "Email verification required",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  try {
+    setIsLoading(true);
+
+    await api.post("/auth/register", {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      otp: otp,
+    });
+
+    toast({
+      title: "Account created 🎉",
+      description: "Please login",
+    });
+
+    navigate("/auth/login");
+  } catch (err: any) {
+    toast({
+      title: "Signup failed",
+      description: err.response?.data?.message || "Something went wrong",
+      variant: "destructive",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
+};
+
+return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Back Button */}
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
+          className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Home
@@ -110,22 +149,24 @@ export default function Signup() {
               </div>
               <span className="text-xl font-bold">BudgetStay</span>
             </Link>
+
             <CardTitle className="text-2xl">Create Account</CardTitle>
             <CardDescription>
-              Join us and start booking amazing stays
+              Sign up using your email
             </CardDescription>
           </CardHeader>
+
           <CardContent>
             <form onSubmit={handleSignup} className="space-y-4">
+
+              {/* Name */}
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label>Full Name</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    id="name"
-                    type="text"
                     required
-                    placeholder="Enter your full name"
+                    placeholder="Enter your name"
                     className="pl-10"
                     value={formData.name}
                     onChange={(e) =>
@@ -135,12 +176,12 @@ export default function Signup() {
                 </div>
               </div>
 
+              {/* Email */}
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label>Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    id="email"
                     type="email"
                     required
                     placeholder="your@email.com"
@@ -151,128 +192,85 @@ export default function Signup() {
                     }
                   />
                 </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleSendOtp}
+                  disabled={isLoading}
+                >
+                  {otpSent ? "OTP Sent" : "Send OTP"}
+                </Button>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
-                      +91
-                    </span>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      required
-                      placeholder="XXXXX XXXXX"
-                      className="pl-12"
-                      value={formData.phone}
-                      onChange={(e) =>
-                        setFormData({ ...formData, phone: e.target.value })
-                      }
-                      disabled={otpSent}
-                    />
-                  </div>
-                  {!otpSent && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={handleSendOtp}
-                      disabled={isLoading || !formData.phone}
-                    >
-                      {isLoading ? "..." : "Verify"}
-                    </Button>
-                  )}
-                </div>
-              </div>
-
+              {/* OTP Input */}
               {otpSent && (
                 <div className="space-y-2">
-                  <Label htmlFor="otp">Enter OTP</Label>
-                  <div className="flex gap-2 items-center">
-                    <Input
-                      id="otp"
-                      type="text"
-                      required
-                      placeholder="Enter 6-digit OTP"
-                      maxLength={6}
-                      className="text-center tracking-widest"
-                      value={formData.otp}
-                      onChange={(e) =>
-                        setFormData({ ...formData, otp: e.target.value })
-                      }
-                    />
-                    <span className="text-sm text-success">✓</span>
-                  </div>
+                  <Label>Enter OTP</Label>
+                  <Input
+                    placeholder="6-digit OTP"
+                    value={otp}
+                    maxLength={6}
+                    onChange={(e) => setOtp(e.target.value)}
+                  />
                 </div>
               )}
 
+              {/* Password */}
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label>Password</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    id="password"
                     type={showPassword ? "text" : "password"}
                     required
-                    placeholder="Create a strong password"
                     className="pl-10 pr-10"
+                    placeholder="Create password"
                     value={formData.password}
                     onChange={(e) =>
                       setFormData({ ...formData, password: e.target.value })
                     }
                   />
+
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  At least 8 characters with uppercase, lowercase, and numbers
-                </p>
               </div>
 
+              {/* Terms */}
               <div className="flex items-start gap-2">
                 <Checkbox
-                  id="terms"
                   checked={agreedToTerms}
-                  onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
+                  onCheckedChange={(checked) =>
+                    setAgreedToTerms(checked as boolean)
+                  }
                 />
-                <label htmlFor="terms" className="text-sm text-muted-foreground leading-tight">
-                  I agree to the{" "}
-                  <Link to="#" className="text-primary hover:underline">
-                    Terms of Service
-                  </Link>{" "}
-                  and{" "}
-                  <Link to="#" className="text-primary hover:underline">
-                    Privacy Policy
-                  </Link>
-                </label>
+                <span className="text-sm text-muted-foreground">
+                  I agree to Terms & Privacy Policy
+                </span>
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Creating account..." : "Create Account"}
+                {isLoading ? "Creating..." : "Create Account"}
               </Button>
             </form>
 
-            <div className="mt-6 text-center">
-              <p className="text-sm text-muted-foreground">
-                Already have an account?{" "}
-                <Link to="/auth/login" className="text-primary font-medium hover:underline">
-                  Sign in
-                </Link>
-              </p>
+            <div className="mt-6 text-center text-sm">
+              Already have an account?{" "}
+              <Link to="/auth/login" className="text-primary font-medium">
+                Login
+              </Link>
             </div>
           </CardContent>
         </Card>
       </div>
     </div>
   );
+
 }

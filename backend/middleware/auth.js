@@ -1,4 +1,7 @@
 import jwt from "jsonwebtoken";
+import Otp from "../models/Otp.js";
+import { sendOtpEmail } from "../utils/sendMail.js";
+
 
 const auth = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
